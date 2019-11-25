@@ -4,10 +4,10 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-public class DataWriterToFile implements Writer {
+public class DataFileWriter implements Writer {
     private File fileOutput;
 
-    public DataWriterToFile(File fileOutput) {
+    public DataFileWriter(File fileOutput) {
         this.fileOutput = fileOutput;
     }
 

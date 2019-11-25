@@ -18,7 +18,7 @@ public class FigureType {
         }
     }
 
-    public int getFigureParam(){
+    public int getFigureParam() {
         return this.figureParam;
     }
 }

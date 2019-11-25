@@ -12,13 +12,13 @@ public class FactoryFigure {
         Figure figure;
         switch (nameFigure) {
             case "RECTANGLE":
-                figure = new Rectangle(parametersFigure.get(0),parametersFigure.get(1));
+                figure = new Rectangle(parametersFigure.get(0), parametersFigure.get(1));
                 break;
             case "CIRCLE":
-                figure =  new Circle(parametersFigure.get(0));
+                figure = new Circle(parametersFigure.get(0));
                 break;
             case "SQUARE":
-                figure =  new Square(parametersFigure.get(0));
+                figure = new Square(parametersFigure.get(0));
                 break;
             default:
                 throw new IllegalStateException("This if not standard type of figure" + nameFigure);

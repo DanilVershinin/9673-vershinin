@@ -4,7 +4,7 @@ import java.io.InputStream;
 import java.util.Scanner;
 
 public class ConsoleReader implements Reader {
-    Scanner scanner;
+    private Scanner scanner;
 
     public ConsoleReader(InputStream inputStream) {
         this.scanner = new Scanner(inputStream);
