@@ -3,6 +3,7 @@ package ru.cft.focusstart;
 import ru.cft.focusstart.figure.Figure;
 import ru.cft.focusstart.reader.Reader;
 
+import java.io.EOFException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,13 +14,13 @@ public class FigureReader {
         this.reader = reader;
     }
 
-    Figure read() throws Exception {
+    Figure read() throws EOFException {
         String nameFigure = reader.readString("Choose and input type of Figure: CIRCLE, RECTANGLE, SQUARE");
         while (!nameFigure.equals("CIRCLE") && !nameFigure.equals("RECTANGLE") && !nameFigure.equals("SQUARE")) {
             if (reader.hasNext()) {
                 nameFigure = reader.readString("You input wrong type. Please, choose and input type from this: CIRCLE, RECTANGLE, SQUARE");
             } else {
-                throw new Exception("You reach end of Reader");
+                throw new EOFException("You reach end of file");
             }
         }
         int numberParametersFigure = new FigureType(nameFigure).getFigureParam();

@@ -9,7 +9,7 @@ public class FileReader implements Reader {
     File file;
     Scanner scanner;
 
-    FileReader(File file) throws IOException {
+    public FileReader(File file) throws IOException {
         this.file = file;
         this.scanner = new Scanner(new FileInputStream(file));
     }

@@ -6,7 +6,7 @@ import java.util.Scanner;
 public class ConsoleReader implements Reader {
     Scanner scanner;
 
-    ConsoleReader(InputStream inputStream){
+    public ConsoleReader(InputStream inputStream) {
         this.scanner = new Scanner(inputStream);
     }
 

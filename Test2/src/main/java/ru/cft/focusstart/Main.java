@@ -1,11 +1,13 @@
 package ru.cft.focusstart;
 
 
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
 import ru.cft.focusstart.exceptions.FIleNotFoundOrEmptyException;
+import ru.cft.focusstart.figure.Figure;
 import ru.cft.focusstart.reader.*;
 import ru.cft.focusstart.writer.*;
 
@@ -16,7 +18,7 @@ public class Main {
 
     private static final Logger log = LoggerFactory.getLogger(Main.class);
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws EOFException {
         Figure result;
         try {
             result = getFigure(args);
@@ -39,11 +41,11 @@ public class Main {
         }
     }
 
-	public static Figure getFigure(String[] args){
+	public static Figure getFigure(String[] args) throws Exception {
 		if (args.length >= 1) {
 			File fileInput = new File(args[0]);
 			if (fileInput.exists() && fileInput.length() != 0) {
-				return new FugureReader(new FileReader(fileInput)).read();
+				return new FigureReader(new FileReader(fileInput)).read();
 			}
 		}
 		return new FigureReader(new ConsoleReader(System.in)).read();
