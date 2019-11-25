@@ -7,27 +7,33 @@ import java.io.EOFException;
 import java.util.ArrayList;
 
 public class FigureReader {
-    Reader reader;
+    private Reader reader;
 
-    FigureReader(Reader reader) {
+    public FigureReader(Reader reader) {
         this.reader = reader;
     }
 
-    Figure read() throws EOFException {
-        String nameFigure = reader.readString("Choose and input type of Figure: CIRCLE, RECTANGLE, SQUARE");
-        while (!nameFigure.equals("CIRCLE") && !nameFigure.equals("RECTANGLE") && !nameFigure.equals("SQUARE")) {
-            if (reader.hasNext()) {
-                nameFigure = reader.readString("You input wrong type. Please, choose and input type from this: CIRCLE, RECTANGLE, SQUARE");
+    public Figure read() throws EOFException {
+        String nameFigure = getNameFigure();
+        FigureType typeFigure = new FigureType(nameFigure);
+        int numberParametersFigure = typeFigure.getFigureParam();
+
+        ArrayList<Double> parameters = new ArrayList<>();
+        for (int i = 0; i < numberParametersFigure; i++) {
+            parameters.add(this.reader.readDouble("Input double number for characteristic size above zero"));
+        }
+        return typeFigure.getTypeOfFigure().createFigure(nameFigure, parameters);
+    }
+
+    private String getNameFigure() throws EOFException {
+        String result = this.reader.readString("Choose and input type of Figure: CIRCLE, RECTANGLE, SQUARE");
+        while (!result.equals("CIRCLE") && !result.equals("RECTANGLE") && !result.equals("SQUARE")) {
+            if (this.reader.hasNext()) {
+                result = this.reader.readString("You input wrong type.\nPlease, choose and input type from this: CIRCLE, RECTANGLE, SQUARE");
             } else {
-                throw new EOFException("Standard type of figure isn't found in a file");
+                throw new EOFException("Standard type of figure isn't found in a file!!!");
             }
         }
-        int numberParametersFigure = new FigureType(nameFigure).getFigureParam();
-
-        ArrayList<Double> parameters = new ArrayList<Double>();
-        for (int i = 0; i < numberParametersFigure; i++) {
-            parameters.add(reader.readDouble("Input double number for characteristic size above zero"));
-        }
-        return new FactoryFigure().createFigure(nameFigure, parameters);
+        return result;
     }
 }

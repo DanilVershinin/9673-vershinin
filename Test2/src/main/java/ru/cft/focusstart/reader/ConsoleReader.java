@@ -26,6 +26,7 @@ public class ConsoleReader implements Reader {
         while (true) {
             System.out.println(message);
             while (!scanner.hasNextDouble()) {
+                System.out.println(message);
                 scanner.nextLine();
             }
             double result = scanner.nextDouble();

@@ -6,11 +6,9 @@ import java.io.IOException;
 import java.util.Scanner;
 
 public class FileReader implements Reader {
-    private File file;
     private Scanner scanner;
 
     public FileReader(File file) throws IOException {
-        this.file = file;
         this.scanner = new Scanner(new FileInputStream(file));
     }
 

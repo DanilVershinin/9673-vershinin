@@ -1,24 +1,31 @@
 package ru.cft.focusstart;
 
 public class FigureType {
-    private int figureParam;
+    private CreatorFigure Type;
+    private int FigureParam;
 
     public FigureType(String Type) {
         switch (Type) {
-            case "RECTANGLE":
-                this.figureParam = 2;
-                break;
             case "CIRCLE":
-            case "SQUARE":
-                this.figureParam = 1;
+                this.Type = CreatorFigure.CIRCLE;
+                this.FigureParam = 1;
                 break;
-            default:
-                this.figureParam = 0;
+            case "SQUARE":
+                this.Type = CreatorFigure.SQUARE;
+                this.FigureParam = 1;
+                break;
+            case "RECTANGLE":
+                this.Type = CreatorFigure.RECTANGLE;
+                this.FigureParam = 2;
                 break;
         }
     }
 
     public int getFigureParam() {
-        return this.figureParam;
+        return FigureParam;
+    }
+
+    public CreatorFigure getTypeOfFigure() {
+        return Type;
     }
 }
