@@ -1,3 +1,5 @@
 rootProject.name = '9673-vershinin'
 include 'Test1'
+include 'Test2'
+include 'Test3'
 
