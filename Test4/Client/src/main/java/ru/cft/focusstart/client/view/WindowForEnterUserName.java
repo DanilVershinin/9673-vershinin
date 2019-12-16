@@ -1,20 +1,15 @@
-package ru.cft.focusstart.client;
+package ru.cft.focusstart.client.view;
 
-import ru.cft.focusstart.common.Connection;
-import ru.cft.focusstart.common.message.*;
+import ru.cft.focusstart.client.model.ViewObserver;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
-import java.time.LocalDateTime;
 
 public class WindowForEnterUserName extends JFrame {
-    private Dimension BUTTON_SIZE = new Dimension(50, 50);
-    private String userName;
 
-    public WindowForEnterUserName(Window window, Connection connection) {
+    public WindowForEnterUserName(ViewObserver observer) {
 
         setSize(300, 200);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -35,20 +30,13 @@ public class WindowForEnterUserName extends JFrame {
         panelForButton.setLayout(new BoxLayout(panelForButton, BoxLayout.X_AXIS));
 
         JButton connectButton = new JButton("Enter");
+        Dimension BUTTON_SIZE = new Dimension(50, 50);
         connectButton.setPreferredSize(BUTTON_SIZE);
         connectButton.addActionListener(new ActionListener() {
             @Override
             public synchronized void actionPerformed(ActionEvent e) {
-                try {
-                    window.setUserName(nameField.getText());
-                    MessageUserConnect message = new MessageUserConnect(LocalDateTime.now(), nameField.getText());
-                    String str = ConverterMessage.toJSON(message);
-                    connection.sendMessage(str);
-                    window.setConnection(connection);
+                    observer.sendUserName(nameField.getText());
                     dispose();
-                } catch (IOException ex) {
-                    JOptionPane.showMessageDialog(null, "Connection isn't set. Try again");
-                }
             }
         });
         panelForButton.add(connectButton);
@@ -56,7 +44,7 @@ public class WindowForEnterUserName extends JFrame {
         JButton exitButton = new JButton("Exit");
         exitButton.setPreferredSize(BUTTON_SIZE);
         exitButton.addActionListener(e -> {
-            connection.close();
+            observer.onDisconnect();
             System.exit(0);
         });
         panelForButton.add(exitButton);
@@ -65,7 +53,4 @@ public class WindowForEnterUserName extends JFrame {
         setVisible(true);
     }
 
-    public String getUserName() {
-        return userName;
-    }
 }

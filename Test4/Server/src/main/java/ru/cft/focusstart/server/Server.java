@@ -1,6 +1,9 @@
 package ru.cft.focusstart.server;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.cft.focusstart.common.Connection;
 import ru.cft.focusstart.common.ConnectionListener;
 import ru.cft.focusstart.common.message.*;
@@ -22,6 +25,8 @@ public class Server implements ConnectionListener {
     private final ArrayList<Connection> connectionList = new ArrayList<>();
     private final ArrayList<String> usernameList = new ArrayList<>();
 
+    private static final Logger log = LoggerFactory.getLogger(Server.class);
+
     private Server() throws IOException {
         Properties properties = new Properties();
         try (InputStream propertiesStream = Server.class.getResourceAsStream("/server.properties")) {
@@ -34,24 +39,25 @@ public class Server implements ConnectionListener {
                 Connection connection = new Connection(this, serverSocket.accept());
             }
         } catch (IOException e) {
-            System.out.println(e.getMessage());
+            log.error(e.getMessage());
         }
     }
 
     @Override
-    public void receiveMessage(Connection connection) throws IOException {
-        Message message = ConverterMessage.toObjectMessage(connection.getIn().readLine());
-        if (message instanceof MessageUserDisconnect) {
-            usernameList.remove(message.getUserName());
-            connectionList.remove(connection);
-            connection.close();
-            sendUpdateListOfUsers();
+    public void receiveMessage(Connection connection)  {
+        try {
+            Message message = ConverterMessage.toObjectMessage(connection.getIn().readLine());
+            if (message instanceof MessageUserDisconnect) {
+                disconnect(connection);
+            }
+            sendMessageToAllConnections(message);
+        } catch (IOException e){
+            getException(connection, e);
         }
-        sendMessageToAllConnections(message);
     }
 
     @Override
-    public void connectIsReady(Connection connection) throws IOException {
+    public void connectIsReady(Connection connection) {
     }
 
     @Override
@@ -59,30 +65,40 @@ public class Server implements ConnectionListener {
         MessageUserConnect initialMessage = (MessageUserConnect) connection.getMessage();
         if (!usernameList.contains(initialMessage.getUserName())) {
             connection.onConnection = true;
+            connection.setUsername(initialMessage.getUserName());
             usernameList.add(initialMessage.getUserName());
             connectionList.add(connection);
             sendMessageToAllConnections(initialMessage);
             sendUpdateListOfUsers();
         } else {
             ErrorMessage message = new ErrorMessage(LocalDateTime.now(), serverName, new IllegalArgumentException("This name is already taken"));
-            System.out.println(Thread.currentThread());
             connection.sendMessage(ConverterMessage.toJSON(message));
         }
     }
 
 
     @Override
-    public void getException(Connection connection) {
+    public void getException(Connection connection, Exception e) {
+        log.error(e.getMessage());
+        disconnect(connection);
     }
 
     @Override
     public void disconnect(Connection connection) {
         connectionList.remove(connection);
+        usernameList.remove(connection.getUsername());
+        connection.close();
+        sendUpdateListOfUsers();
     }
 
-    private void sendUpdateListOfUsers() throws IOException {
+    private void sendUpdateListOfUsers(){
         ObjectMapper mapper = new ObjectMapper();
-        String sList = mapper.writeValueAsString(usernameList);
+        String sList = null;
+        try {
+            sList = mapper.writeValueAsString(usernameList);
+        } catch (JsonProcessingException e) {
+            log.error(e.getMessage());
+        }
         for (Connection connection : connectionList) {
             connection.sendMessage(sList);
         }
@@ -94,4 +110,5 @@ public class Server implements ConnectionListener {
             connection.sendMessage(sMessage);
         }
     }
+
 }

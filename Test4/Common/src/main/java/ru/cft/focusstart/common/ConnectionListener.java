@@ -12,7 +12,7 @@ public interface ConnectionListener {
 
     void checkUserName(Connection connection) throws IOException, InterruptedException;
 
-    void getException(Connection connection) throws IOException;
+    void getException(Connection connection, Exception e);
 
     void disconnect(Connection connection);
 }

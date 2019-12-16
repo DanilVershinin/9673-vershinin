@@ -7,10 +7,11 @@ import java.net.Socket;
 
 public class Connection {
     private Socket socket;
-    ConnectionListener listener;
+    private ConnectionListener listener;
     private BufferedReader in;
     private BufferedWriter out;
     private Thread readerThread;
+    private String username;
     public boolean onConnection = false;
 
     public Connection(ConnectionListener listener, String ipAddress, int port) throws IOException {
@@ -45,11 +46,7 @@ public class Connection {
             out.write(message + "\n");
             out.flush();
         } catch (IOException e) {
-            try {
-                listener.getException(Connection.this);
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
+            listener.getException(this, e);
         }
     }
 
@@ -59,18 +56,29 @@ public class Connection {
     }
 
     public void close() {
-        readerThread.interrupt();
-        try {
-            in.close();
-            out.close();
-            socket.close();
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
+        if (onConnection) {
+            readerThread.interrupt();
+            try {
+                in.close();
+                out.close();
+                socket.close();
+                onConnection = false;
+            } catch (IOException e) {
+                System.out.println(e.getMessage());
+            }
         }
     }
 
     public BufferedReader getIn() {
         return in;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getUsername() {
+        return username;
     }
 }
 

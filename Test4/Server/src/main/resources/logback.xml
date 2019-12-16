@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <target>System.out</target>
+        <encoder>
+            <pattern>[ERROR] %date{dd.MM.yyyy HH:mm:ss.SSS} Error in class %C, in Method %M, in Line %L - %message%n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="error">
+        <appender-ref ref="console"/>
+    </root>
+</configuration>

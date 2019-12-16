@@ -1,17 +1,13 @@
-package ru.cft.focusstart.client;
+package ru.cft.focusstart.client.view;
 
-import ru.cft.focusstart.common.Connection;
+import ru.cft.focusstart.client.model.ViewObserver;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
 
 public class WindowConnection extends JFrame {
-    private Connection connection;
-    private Dimension BUTTON_SIZE = new Dimension(50, 50);
 
-    public WindowConnection(Window window){
-//        JFrame currentWindow = new JFrame();
+    public WindowConnection(ViewObserver observer) {
         setSize(300, 200);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
@@ -20,13 +16,13 @@ public class WindowConnection extends JFrame {
         panelForInput.setLayout(new BoxLayout(panelForInput, BoxLayout.Y_AXIS));
 
         JLabel labelIp = new JLabel("IP address:");
-        labelIp.setAlignmentX(panelForInput.CENTER_ALIGNMENT);
+        labelIp.setAlignmentX(CENTER_ALIGNMENT);
         panelForInput.add(labelIp);
         JTextField ipField = new JTextField("127.0.0.1");
         panelForInput.add(ipField);
 
         JLabel labelPort = new JLabel("Port:");
-        labelPort.setAlignmentX(panelForInput.CENTER_ALIGNMENT);
+        labelPort.setAlignmentX(CENTER_ALIGNMENT);
         panelForInput.add(labelPort);
         JTextField portField = new JTextField("8643");
         panelForInput.add(portField);
@@ -36,12 +32,12 @@ public class WindowConnection extends JFrame {
         panelForButton.setLayout(new BoxLayout(panelForButton, BoxLayout.X_AXIS));
 
         JButton connectButton = new JButton("Connect");
+        Dimension BUTTON_SIZE = new Dimension(50, 50);
         connectButton.setPreferredSize(BUTTON_SIZE);
         connectButton.addActionListener(e -> {
-            try {
-                connection = new Connection(window, ipField.getText(), Integer.parseInt(portField.getText()));
+            if (observer.onConnect(ipField.getText(), Integer.parseInt(portField.getText())).equals("READY")) {
                 dispose();
-            } catch (IOException ex) {
+            } else {
                 JOptionPane.showMessageDialog(null, "Connection isn't set. Try again");
             }
         });
@@ -58,7 +54,4 @@ public class WindowConnection extends JFrame {
         setVisible(true);
     }
 
-    public Connection getConnection() {
-        return connection;
-    }
 }
